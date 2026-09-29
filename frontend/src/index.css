@@ -1,0 +1,135 @@
+:root {
+  --bg-dark: #0a0e1a;
+  --bg-card: #131a2b;
+  --bg-sidebar: #0d1117;
+  --text-primary: #e0e0e0;
+  --text-secondary: #8b9bb4;
+  --border-color: #1e293b;
+  
+  /* Severity Colors */
+  --color-critical: #ef4444; /* Red */
+  --color-high: #f97316; /* Orange */
+  --color-medium: #eab308; /* Yellow */
+  --color-low: #3b82f6; /* Blue */
+  --color-info: #6b7280; /* Gray */
+  --color-normal: #22c55e; /* Green */
+  
+  --bg-critical: rgba(239, 68, 68, 0.2);
+  --bg-high: rgba(249, 115, 22, 0.2);
+  --bg-medium: rgba(234, 179, 8, 0.2);
+  --bg-low: rgba(59, 130, 246, 0.2);
+  --bg-info: rgba(107, 114, 128, 0.2);
+  --bg-normal: rgba(34, 197, 94, 0.2);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--bg-dark);
+  color: var(--text-primary);
+}
+
+a {
+  color: var(--color-low);
+  text-decoration: none;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-dark);
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Common Card Style */
+.card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  padding: 1rem;
+}
+
+/* Table Style */
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th, td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+th {
+  color: var(--text-secondary);
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+tr:hover {
+  background-color: rgba(255, 255, 255, 0.02);
+}
+
+/* Form elements */
+select, input, textarea {
+  background-color: #1e293b;
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem;
+  border-radius: 4px;
+  font-family: inherit;
+}
+select:focus, input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--color-low);
+}
+button {
+  cursor: pointer;
+  background-color: var(--color-low);
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+button:hover {
+  opacity: 0.9;
+}
+button.secondary {
+  background-color: #334155;
+}
+button.danger {
+  background-color: var(--color-critical);
+}

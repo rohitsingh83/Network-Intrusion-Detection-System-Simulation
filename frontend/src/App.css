@@ -1,0 +1,112 @@
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+.sidebar {
+  width: 240px;
+  background-color: var(--bg-sidebar);
+  border-right: 1px solid var(--border-color);
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.sidebar-header h2 {
+  font-size: 1.25rem;
+  margin-left: 0.75rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.time-display {
+  padding: 1rem 1.5rem;
+  font-family: monospace;
+  font-size: 1.1rem;
+  color: var(--color-normal);
+  text-align: center;
+  border-bottom: 1px solid var(--border-color);
+  background-color: rgba(0,0,0,0.2);
+}
+
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+}
+
+.nav-link.active {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: var(--color-low);
+  border-left-color: var(--color-low);
+}
+
+.nav-link span {
+  margin-left: 1rem;
+  font-weight: 500;
+}
+
+.main-content {
+  margin-left: 240px;
+  flex: 1;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+/* Utility classes for pages */
+.page-header {
+  margin-bottom: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.page-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+.grid-container {
+  display: grid;
+  gap: 1.5rem;
+}
+.grid-cols-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-cols-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-cols-6 { grid-template-columns: repeat(6, 1fr); }
+.grid-cols-4 { grid-template-columns: repeat(4, 1fr); }
+
+@media (max-width: 1024px) {
+  .grid-cols-6 { grid-template-columns: repeat(3, 1fr); }
+  .grid-cols-4 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 768px) {
+  .grid-cols-6 { grid-template-columns: repeat(2, 1fr); }
+  .grid-cols-2 { grid-template-columns: 1fr; }
+  .grid-cols-4 { grid-template-columns: 1fr; }
+  .sidebar { width: 60px; }
+  .sidebar-header h2, .nav-link span, .time-display { display: none; }
+  .main-content { margin-left: 60px; padding: 1rem; }
+}
