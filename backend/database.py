@@ -262,46 +262,58 @@ class DatabaseManager:
             
             return {
                 'total_flows': total_flows,
+                'totalFlows': total_flows,
                 'normal_flows': normal_flows,
+                'normalTraffic': normal_flows,
                 'suspicious_flows': suspicious_flows,
+                'suspiciousTraffic': suspicious_flows,
                 'open_alerts': open_alerts,
+                'openAlerts': open_alerts,
                 'critical_alerts': critical_alerts,
-                'avg_risk_score': round(avg_risk, 2)
+                'criticalAlerts': critical_alerts,
+                'avg_risk_score': round(avg_risk, 2),
+                'averageRiskScore': round(avg_risk, 2)
             }
 
     def get_traffic_timeline(self, hours=24) -> List[Dict[str, Any]]:
         with self.get_cursor() as cursor:
             query = '''
-                SELECT strftime('%Y-%m-%d %H:00:00', timestamp) as time_bucket, COUNT(*) as count
+                SELECT 
+                    strftime('%H:00', timestamp) as time,
+                    strftime('%Y-%m-%d %H:00:00', timestamp) as time_bucket,
+                    SUM(CASE WHEN UPPER(classification) = 'NORMAL' THEN 1 ELSE 0 END) as normal,
+                    SUM(CASE WHEN UPPER(classification) != 'NORMAL' THEN 1 ELSE 0 END) as suspicious,
+                    COUNT(*) as count
                 FROM NETWORK_FLOWS 
-                WHERE timestamp >= datetime('now', ?)
-                GROUP BY time_bucket
-                ORDER BY time_bucket ASC
+                GROUP BY time
+                ORDER BY time ASC
             '''
-            cursor.execute(query, (f'-{hours} hours',))
-            return [dict(row) for row in cursor.fetchall()]
+            cursor.execute(query)
+            rows = [dict(row) for row in cursor.fetchall()]
+            if not rows:
+                return [{'time': f'{i:02d}:00', 'normal': 0, 'suspicious': 0, 'count': 0} for i in range(24)]
+            return rows
 
     def get_alert_timeline(self, hours=24) -> List[Dict[str, Any]]:
         with self.get_cursor() as cursor:
             query = '''
                 SELECT strftime('%Y-%m-%d %H:00:00', created_at) as time_bucket, severity, COUNT(*) as count
                 FROM ALERTS 
-                WHERE created_at >= datetime('now', ?)
                 GROUP BY time_bucket, severity
                 ORDER BY time_bucket ASC
             '''
-            cursor.execute(query, (f'-{hours} hours',))
+            cursor.execute(query)
             return [dict(row) for row in cursor.fetchall()]
 
     def get_protocol_distribution(self) -> List[Dict[str, Any]]:
         with self.get_cursor() as cursor:
-            cursor.execute('SELECT protocol, COUNT(*) as count FROM NETWORK_FLOWS GROUP BY protocol ORDER BY count DESC')
+            cursor.execute('SELECT protocol as name, COUNT(*) as value, COUNT(*) as count FROM NETWORK_FLOWS GROUP BY protocol ORDER BY value DESC')
             return [dict(row) for row in cursor.fetchall()]
 
     def get_top_source_ips(self, limit=10) -> List[Dict[str, Any]]:
         with self.get_cursor() as cursor:
             cursor.execute('''
-                SELECT source_ip, COUNT(*) as count 
+                SELECT source_ip as ip, source_ip as name, COUNT(*) as count 
                 FROM ALERTS 
                 GROUP BY source_ip 
                 ORDER BY count DESC 
@@ -311,16 +323,16 @@ class DatabaseManager:
 
     def get_severity_distribution(self) -> List[Dict[str, Any]]:
         with self.get_cursor() as cursor:
-            cursor.execute('SELECT severity, COUNT(*) as count FROM ALERTS GROUP BY severity')
+            cursor.execute('SELECT severity as name, severity, COUNT(*) as count FROM ALERTS GROUP BY severity')
             return [dict(row) for row in cursor.fetchall()]
 
     def get_port_distribution(self, limit=20) -> List[Dict[str, Any]]:
         with self.get_cursor() as cursor:
             cursor.execute('''
-                SELECT destination_port as port, COUNT(*) as count 
+                SELECT CAST(destination_port AS TEXT) as name, destination_port as port, COUNT(*) as value, COUNT(*) as count 
                 FROM NETWORK_FLOWS 
                 GROUP BY destination_port 
-                ORDER BY count DESC 
+                ORDER BY value DESC 
                 LIMIT ?
             ''', (limit,))
             return [dict(row) for row in cursor.fetchall()]
