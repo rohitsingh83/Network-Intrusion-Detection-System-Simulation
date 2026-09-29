@@ -1,18 +1,35 @@
 /**
- * API Service - Axios wrapper for the Network IDS Backend
+ * Dual-Mode API Service - Hybrid Backend & Standalone IDS
  * ========================================================
- * Talks to FastAPI endpoints via relative URL /api.
- * Normalizes snake_case backend database keys to both camelCase
- * and snake_case so all UI components and Recharts charts render seamlessly.
+ * Intelligently switches between:
+ * 1. Live Python FastAPI backend (when running locally or connected to server)
+ * 2. Standalone Client-Side IDS Simulation Engine (when hosted independently on GitHub Pages/Vercel)
+ *
+ * Guarantees zero downtime, zero 404s, and full interactive fidelity in all environments.
  */
 
 import axios from 'axios';
+import { standaloneEngine } from './standaloneIDS';
 
-const api = axios.create({ baseURL: '/api', timeout: 10000 });
+const api = axios.create({ baseURL: '/api', timeout: 3000 });
 
-/**
- * Normalizes an alert object to ensure both camelCase and snake_case access
- */
+let backendAvailable = null;
+
+// Probes backend availability once on startup
+export const checkBackend = async () => {
+  if (backendAvailable !== null) return backendAvailable;
+  try {
+    const res = await api.get('/health');
+    backendAvailable = res.status === 200;
+  } catch {
+    backendAvailable = false;
+  }
+  return backendAvailable;
+};
+
+// Expose direct access to standalone engine for interactive controls
+export { standaloneEngine };
+
 export const normalizeAlert = (a) => {
   if (!a) return null;
   const id = a.alert_id || a.id || 'ALT-00000';
@@ -58,235 +75,281 @@ export const normalizeAlert = (a) => {
 };
 
 /* ------------------------------------------------------------------ */
-/*  Dashboard                                                          */
+/*  Dashboard Analytics                                                */
 /* ------------------------------------------------------------------ */
 
 export const getStats = async () => {
   try {
-    const res = await api.get('/dashboard/stats');
-    const d = res.data || {};
-    return {
-      totalFlows: d.total_flows ?? d.totalFlows ?? 0,
-      normalTraffic: d.normal_flows ?? d.normalTraffic ?? 0,
-      suspiciousTraffic: d.suspicious_flows ?? d.suspiciousTraffic ?? 0,
-      openAlerts: d.open_alerts ?? d.openAlerts ?? 0,
-      criticalAlerts: d.critical_alerts ?? d.criticalAlerts ?? 0,
-      averageRiskScore: d.avg_risk_score ?? d.averageRiskScore ?? 0,
-    };
-  } catch (err) {
-    console.error('getStats error:', err);
-    return {
-      totalFlows: 0, normalTraffic: 0, suspiciousTraffic: 0,
-      openAlerts: 0, criticalAlerts: 0, averageRiskScore: 0,
-    };
+    const live = await checkBackend();
+    if (live) {
+      const res = await api.get('/dashboard/stats');
+      const d = res.data || {};
+      return {
+        totalFlows: d.total_flows ?? d.totalFlows ?? 0,
+        normalTraffic: d.normal_flows ?? d.normalTraffic ?? 0,
+        suspiciousTraffic: d.suspicious_flows ?? d.suspiciousTraffic ?? 0,
+        openAlerts: d.open_alerts ?? d.openAlerts ?? 0,
+        criticalAlerts: d.critical_alerts ?? d.criticalAlerts ?? 0,
+        averageRiskScore: d.avg_risk_score ?? d.averageRiskScore ?? 0,
+      };
+    }
+  } catch {
+    backendAvailable = false;
   }
+  return standaloneEngine.getStats();
 };
 
 export const getTrafficTimeline = async () => {
   try {
-    const res = await api.get('/dashboard/traffic');
-    const list = res.data?.data || res.data || [];
-    if (Array.isArray(list) && list.length > 0) {
-      return list;
+    const live = await checkBackend();
+    if (live) {
+      const res = await api.get('/dashboard/traffic');
+      const list = res.data?.data || res.data || [];
+      if (Array.isArray(list) && list.length > 0) return list;
     }
-  } catch (err) {
-    console.error('getTrafficTimeline error:', err);
+  } catch {
+    backendAvailable = false;
   }
-  return Array.from({ length: 24 }, (_, i) => ({
-    time: `${String(i).padStart(2, '0')}:00`,
-    normal: Math.floor(Math.random() * 400 + 100),
-    suspicious: Math.floor(Math.random() * 30),
-  }));
+  return standaloneEngine.getTrafficTimeline();
 };
 
 export const getAlertTimeline = async () => {
   try {
-    const res = await api.get('/dashboard/alerts');
-    return res.data?.data || res.data || [];
-  } catch (err) {
-    console.error('getAlertTimeline error:', err);
-    return [];
+    const live = await checkBackend();
+    if (live) {
+      const res = await api.get('/dashboard/alerts');
+      return res.data?.data || res.data || [];
+    }
+  } catch {
+    backendAvailable = false;
   }
+  return standaloneEngine.getSeverityDistribution();
 };
 
 export const getProtocolDist = async () => {
   try {
-    const res = await api.get('/dashboard/protocols');
-    const list = res.data?.data || res.data || [];
-    if (Array.isArray(list) && list.length > 0) return list;
-  } catch (err) {
-    console.error('getProtocolDist error:', err);
+    const live = await checkBackend();
+    if (live) {
+      const res = await api.get('/dashboard/protocols');
+      const list = res.data?.data || res.data || [];
+      if (Array.isArray(list) && list.length > 0) return list;
+    }
+  } catch {
+    backendAvailable = false;
   }
-  return [
-    { name: 'TCP', value: 75 },
-    { name: 'UDP', value: 25 },
-  ];
+  return standaloneEngine.getProtocolDistribution();
 };
 
 export const getPortDist = async () => {
   try {
-    const res = await api.get('/dashboard/ports');
-    return res.data?.data || res.data || [];
-  } catch (err) {
-    console.error('getPortDist error:', err);
-    return [];
+    const live = await checkBackend();
+    if (live) {
+      const res = await api.get('/dashboard/ports');
+      const list = res.data?.data || res.data || [];
+      if (Array.isArray(list) && list.length > 0) return list;
+    }
+  } catch {
+    backendAvailable = false;
   }
+  return standaloneEngine.getPortDistribution();
 };
 
 export const getTopSources = async () => {
   try {
-    const res = await api.get('/dashboard/sources');
-    return res.data?.data || res.data || [];
-  } catch (err) {
-    console.error('getTopSources error:', err);
-    return [];
+    const live = await checkBackend();
+    if (live) {
+      const res = await api.get('/dashboard/sources');
+      const list = res.data?.data || res.data || [];
+      if (Array.isArray(list) && list.length > 0) return list;
+    }
+  } catch {
+    backendAvailable = false;
   }
-};
-
-export const getRiskDist = async () => {
-  try {
-    const res = await api.get('/dashboard/risk');
-    return res.data?.data || res.data || [];
-  } catch (err) {
-    console.error('getRiskDist error:', err);
-    return [];
-  }
+  return standaloneEngine.getTopSources();
 };
 
 export const getSeverityDist = async () => {
   try {
-    const res = await api.get('/dashboard/severity');
-    const list = res.data?.data || res.data || [];
-    if (Array.isArray(list) && list.length > 0) return list;
-  } catch (err) {
-    console.error('getSeverityDist error:', err);
+    const live = await checkBackend();
+    if (live) {
+      const res = await api.get('/dashboard/severity');
+      const list = res.data?.data || res.data || [];
+      if (Array.isArray(list) && list.length > 0) return list;
+    }
+  } catch {
+    backendAvailable = false;
   }
-  return [
-    { name: 'CRITICAL', count: 0 },
-    { name: 'HIGH', count: 0 },
-    { name: 'MEDIUM', count: 0 },
-    { name: 'LOW', count: 0 },
-  ];
+  return standaloneEngine.getSeverityDistribution();
 };
 
-/* ------------------------------------------------------------------ */
-/*  Flows                                                              */
-/* ------------------------------------------------------------------ */
-
-export const getFlows = async (params = {}) => {
+export const getFlows = async (limit = 100) => {
   try {
-    const res = await api.get('/flows', { params });
-    const list = res.data?.data || res.data || [];
-    return Array.isArray(list) ? list : [];
-  } catch (err) {
-    console.error('getFlows error:', err);
-    return [];
+    const live = await checkBackend();
+    if (live) {
+      const res = await api.get('/flows', { params: { limit } });
+      const list = res.data?.data || res.data || [];
+      if (Array.isArray(list) && list.length > 0) return list;
+    }
+  } catch {
+    backendAvailable = false;
   }
-};
-
-export const getFlow = async (id) => {
-  const res = await api.get(`/flows/${id}`);
-  return res.data;
+  return standaloneEngine.getFlows(limit);
 };
 
 /* ------------------------------------------------------------------ */
-/*  Alerts                                                             */
+/*  Alerts Management & Forensic Triage                                */
 /* ------------------------------------------------------------------ */
 
 export const getAlerts = async (params = {}) => {
   try {
-    const res = await api.get('/alerts', { params });
-    const list = res.data?.data || res.data || [];
-    if (Array.isArray(list)) {
-      return list.map(normalizeAlert);
+    const live = await checkBackend();
+    if (live) {
+      const res = await api.get('/alerts', { params });
+      const list = res.data?.data || res.data || [];
+      if (Array.isArray(list) && list.length > 0) {
+        return list.map(normalizeAlert);
+      }
     }
-  } catch (err) {
-    console.error('getAlerts error:', err);
+  } catch {
+    backendAvailable = false;
   }
-  return [];
+  return standaloneEngine.alerts.map(normalizeAlert);
 };
 
 export const getAlert = async (id) => {
   try {
-    const res = await api.get(`/alerts/${id}`);
-    return normalizeAlert(res.data);
-  } catch (err) {
-    console.error('getAlert error:', err);
-    return normalizeAlert({
-      alert_id: id,
-      source_ip: '192.0.2.15',
-      destination_ip: '198.51.100.20',
-      alert_type: 'High Connection Rate',
-      severity: 'HIGH',
-      risk_score: 75,
-      status: 'NEW',
-      protocol: 'TCP',
-      source_port: 49152,
-      destination_port: 80,
-    });
+    const live = await checkBackend();
+    if (live) {
+      const res = await api.get(`/alerts/${id}`);
+      return normalizeAlert(res.data);
+    }
+  } catch {
+    backendAvailable = false;
   }
-};
-
-export const updateAlertStatus = async (id, status, analyst = 'SOC-Analyst') => {
-  const res = await api.put(`/alerts/${id}/status`, { status, analyst });
-  return res.data;
-};
-
-export const addAlertNote = async (id, noteText, analyst = 'SOC-Analyst') => {
-  const res = await api.post(`/alerts/${id}/notes`, {
-    note: noteText,
-    analyst,
-    action: 'COMMENT',
+  const found = standaloneEngine.alerts.find(a => a.id === id || a.alert_id === id);
+  if (found) return normalizeAlert(found);
+  return normalizeAlert({
+    alert_id: id,
+    source_ip: '198.51.100.88',
+    destination_ip: '192.0.2.10',
+    alert_type: 'SYN-Heavy Flood Pattern',
+    severity: 'CRITICAL',
+    risk_score: 92,
+    anomaly_score: 88,
+    status: 'NEW',
+    protocol: 'TCP',
+    source_port: 48921,
+    destination_port: 80,
   });
-  return res.data;
+};
+
+export const updateAlertStatus = async (id, status, analyst = 'SOC-Analyst-Tier1') => {
+  try {
+    const live = await checkBackend();
+    if (live) {
+      const res = await api.put(`/alerts/${id}/status`, { status, analyst });
+      return res.data;
+    }
+  } catch {
+    backendAvailable = false;
+  }
+  return standaloneEngine.updateAlertStatus(id, status, analyst);
+};
+
+export const addAlertNote = async (id, noteText, analyst = 'SOC-Analyst-Tier1') => {
+  try {
+    const live = await checkBackend();
+    if (live) {
+      const res = await api.post(`/alerts/${id}/notes`, { note: noteText, analyst, action: 'COMMENT' });
+      return res.data;
+    }
+  } catch {
+    backendAvailable = false;
+  }
+  return standaloneEngine.addAlertNote(id, noteText, analyst);
+};
+
+export const getAlertNotes = async (id) => {
+  try {
+    const live = await checkBackend();
+    if (live) {
+      const res = await api.get(`/alerts/${id}/notes`);
+      return res.data?.data || res.data || [];
+    }
+  } catch {
+    backendAvailable = false;
+  }
+  return standaloneEngine.getAlertNotes(id);
 };
 
 /* ------------------------------------------------------------------ */
-/*  Rules                                                              */
+/*  Rules Engine                                                       */
 /* ------------------------------------------------------------------ */
 
 export const getRules = async () => {
   try {
-    const res = await api.get('/rules');
-    const list = res.data?.data || res.data || [];
-    return Array.isArray(list) ? list : [];
-  } catch (err) {
-    console.error('getRules error:', err);
-    return [];
+    const live = await checkBackend();
+    if (live) {
+      const res = await api.get('/rules');
+      const list = res.data?.data || res.data || [];
+      if (Array.isArray(list) && list.length > 0) return list;
+    }
+  } catch {
+    backendAvailable = false;
   }
+  return standaloneEngine.rules;
 };
 
 export const updateRule = async (id, data) => {
-  const res = await api.put(`/rules/${id}`, data);
-  return res.data;
+  try {
+    const live = await checkBackend();
+    if (live) {
+      const res = await api.put(`/rules/${id}`, data);
+      return res.data;
+    }
+  } catch {
+    backendAvailable = false;
+  }
+  return standaloneEngine.updateRule(id, data);
 };
 
 /* ------------------------------------------------------------------ */
-/*  Server-Sent Events (real-time stream)                              */
+/*  Real-Time Event Stream (SSE or In-Browser Engine)                  */
 /* ------------------------------------------------------------------ */
 
 export const setupSSE = (onMessage) => {
-  let es;
-  try {
-    es = new EventSource('/api/events/stream');
-    es.onmessage = (e) => {
+  // If backend is unreachable or on static page, subscribe to in-browser engine directly
+  const unsubscribe = standaloneEngine.subscribe(onMessage);
+
+  let es = null;
+  checkBackend().then(live => {
+    if (live) {
       try {
-        const parsed = JSON.parse(e.data);
-        onMessage(parsed);
-      } catch {
-        /* ignore parse errors */
-      }
-    };
-    es.onerror = () => {
-      // Automatic reconnection
-    };
-  } catch {
-    const timer = setInterval(() => {
-      onMessage({ type: 'heartbeat' });
-    }, 15000);
-    return () => clearInterval(timer);
-  }
+        es = new EventSource('/api/events/stream');
+        es.onmessage = (e) => {
+          try {
+            const parsed = JSON.parse(e.data);
+            onMessage(parsed);
+          } catch { /* noop */ }
+        };
+      } catch { /* noop */ }
+    }
+  });
+
   return () => {
+    unsubscribe();
     if (es) es.close();
   };
+};
+
+/* ------------------------------------------------------------------ */
+/*  Interactive Demo Helpers                                           */
+/* ------------------------------------------------------------------ */
+
+export const injectAttackWave = (type) => {
+  return standaloneEngine.injectAttack(type);
+};
+
+export const toggleLiveStream = (active) => {
+  return standaloneEngine.toggleStreaming(active);
 };

@@ -1,38 +1,60 @@
 import React from 'react';
 
 const SeverityBadge = ({ severity }) => {
-  const getSeverityColor = (sev) => {
-    switch (sev?.toUpperCase()) {
-      case 'CRITICAL': return 'var(--color-critical)';
-      case 'HIGH': return 'var(--color-high)';
-      case 'MEDIUM': return 'var(--color-medium)';
-      case 'LOW': return 'var(--color-low)';
-      default: return 'var(--color-info)';
+  const sev = (severity || 'INFO').toUpperCase();
+
+  const config = {
+    CRITICAL: {
+      color: '#ef4444',
+      bg: 'rgba(239, 68, 68, 0.16)',
+      border: 'rgba(239, 68, 68, 0.45)',
+      glow: '0 0 10px rgba(239, 68, 68, 0.35)',
+      dotClass: 'radar-red'
+    },
+    HIGH: {
+      color: '#f97316',
+      bg: 'rgba(249, 115, 22, 0.16)',
+      border: 'rgba(249, 115, 22, 0.45)',
+      glow: '0 0 10px rgba(249, 115, 22, 0.35)',
+      dotClass: 'radar-red'
+    },
+    MEDIUM: {
+      color: '#eab308',
+      bg: 'rgba(234, 179, 8, 0.16)',
+      border: 'rgba(234, 179, 8, 0.45)',
+      glow: 'none',
+      dotClass: null
+    },
+    LOW: {
+      color: '#38bdf8',
+      bg: 'rgba(56, 189, 248, 0.16)',
+      border: 'rgba(56, 189, 248, 0.4)',
+      glow: 'none',
+      dotClass: null
+    },
+    INFO: {
+      color: '#94a3b8',
+      bg: 'rgba(148, 163, 184, 0.12)',
+      border: 'rgba(148, 163, 184, 0.3)',
+      glow: 'none',
+      dotClass: null
     }
   };
 
-  const getSeverityBg = (sev) => {
-    switch (sev?.toUpperCase()) {
-      case 'CRITICAL': return 'var(--bg-critical)';
-      case 'HIGH': return 'var(--bg-high)';
-      case 'MEDIUM': return 'var(--bg-medium)';
-      case 'LOW': return 'var(--bg-low)';
-      default: return 'var(--bg-info)';
-    }
-  };
+  const current = config[sev] || config.INFO;
 
   return (
-    <span style={{
-      backgroundColor: getSeverityBg(severity),
-      color: getSeverityColor(severity),
-      padding: '0.25rem 0.75rem',
-      borderRadius: '9999px',
-      fontSize: '0.75rem',
-      fontWeight: '600',
-      display: 'inline-block',
-      textAlign: 'center'
-    }}>
-      {severity}
+    <span
+      className="badge"
+      style={{
+        backgroundColor: current.bg,
+        color: current.color,
+        borderColor: current.border,
+        boxShadow: current.glow,
+      }}
+    >
+      {current.dotClass && <span className={`radar-dot ${current.dotClass}`} style={{ width: '6px', height: '6px' }} />}
+      {sev}
     </span>
   );
 };

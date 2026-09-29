@@ -1,12 +1,14 @@
 # 🛡️ Network Intrusion Detection System (IDS) Simulation
 
+[![Live SOC Console](https://img.shields.io/badge/🌐_Live_Demo-GitHub_Pages-22c55e?style=for-the-badge&logo=react)](https://rohitsingh83.github.io/Network-Intrusion-Detection-System-Simulation/)
 [![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.104-green.svg)](https://fastapi.tiangolo.com/)
 [![React](https://img.shields.io/badge/React-18-61DAFB.svg)](https://react.dev/)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Defensive](https://img.shields.io/badge/Security-Defensive%20Only-brightgreen.svg)](#ethical-disclaimer)
 
-> **A complete, industry-oriented defensive cybersecurity project** featuring synthetic traffic generation, signature-based and anomaly-based detection, hybrid risk scoring, alert correlation, SOC analytics, and optional machine learning — all running safely on localhost with synthetic data.
+> 🚀 **LIVE INTERACTIVE SOC DASHBOARD:** **[Launch Network IDS Simulator Online](https://rohitsingh83.github.io/Network-Intrusion-Detection-System-Simulation/)**  
+> **Runs 100% standalone in your web browser** without requiring any local backend server, while also seamlessly connecting to the FastAPI Python backend when running locally. Features real-time attack simulation (SYN Flood, Multi-Port Recon, Credential Brute Force, Exfiltration), 8 heuristic detection rules, Z-score statistical anomaly radar, MITRE ATT&CK® matrix mapping, and deep flow packet inspection.
 
 ---
 
