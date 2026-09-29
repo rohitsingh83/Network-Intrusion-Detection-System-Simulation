@@ -28,11 +28,11 @@ def generate_data(count=5000, force=False):
     csv_path = os.path.join(PROJECT_ROOT, "data", "network_traffic.csv")
 
     if os.path.exists(csv_path) and not force:
-        print(f"✓ Dataset already exists: {csv_path}")
+        print(f"[OK] Dataset already exists: {csv_path}")
         return
 
     print("=" * 50)
-    print("  STEP 1 — Generating Synthetic Network Traffic")
+    print("  STEP 1 -- Generating Synthetic Network Traffic")
     print("=" * 50)
     gen_script = os.path.join(PROJECT_ROOT, "simulator", "generate_dataset.py")
     subprocess.run(
@@ -40,7 +40,7 @@ def generate_data(count=5000, force=False):
         cwd=PROJECT_ROOT,
         check=True,
     )
-    print(f"✓ Dataset saved to {csv_path}\n")
+    print(f"[OK] Dataset saved to {csv_path}\n")
 
 
 # ---------------------------------------------------------------------------
@@ -49,7 +49,7 @@ def generate_data(count=5000, force=False):
 def train_model():
     """Train ML models on the synthetic dataset."""
     print("=" * 50)
-    print("  STEP 2 — Training ML Models")
+    print("  STEP 2 -- Training ML Models")
     print("=" * 50)
     train_script = os.path.join(PROJECT_ROOT, "ml", "train_model.py")
     os.makedirs(os.path.join(PROJECT_ROOT, "models"), exist_ok=True)
@@ -65,7 +65,7 @@ def train_model():
         cwd=PROJECT_ROOT,
         check=True,
     )
-    print("✓ Model training complete\n")
+    print("[OK] Model training complete\n")
 
 
 # ---------------------------------------------------------------------------

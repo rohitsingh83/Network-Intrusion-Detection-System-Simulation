@@ -229,6 +229,28 @@ app.include_router(rules.router,     prefix="/api/rules",     tags=["Rules"])
 app.include_router(sse.router,       prefix="/api/events",    tags=["Events"])
 
 # ---------------------------------------------------------------------------
+# Mount Production Frontend (React Build)
+# ---------------------------------------------------------------------------
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+
+frontend_build = os.path.join(PROJECT_ROOT, "frontend", "build")
+if os.path.exists(frontend_build):
+    static_dir = os.path.join(frontend_build, "static")
+    if os.path.exists(static_dir):
+        app.mount("/static", StaticFiles(directory=static_dir), name="static")
+
+    @app.get("/{full_path:path}", include_in_schema=False)
+    async def serve_spa(full_path: str):
+        # Don't intercept API routes
+        if full_path.startswith("api/"):
+            return JSONResponse(status_code=404, content={"message": "Not Found"})
+        file_path = os.path.join(frontend_build, full_path)
+        if full_path and os.path.exists(file_path) and os.path.isfile(file_path):
+            return FileResponse(file_path)
+        return FileResponse(os.path.join(frontend_build, "index.html"))
+
+# ---------------------------------------------------------------------------
 # Entry-point
 # ---------------------------------------------------------------------------
 if __name__ == "__main__":
