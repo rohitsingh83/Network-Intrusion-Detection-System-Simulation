@@ -25,12 +25,13 @@ class MLPredictor:
     and provides methods to predict whether traffic is NORMAL or SUSPICIOUS.
     """
     
-    def __init__(self, model_path: str = 'models/ids_model.joblib'):
+    def __init__(self, model_path: str = 'models/ids_model.joblib', lazy: bool = True):
         """
         Initializes the MLPredictor.
         
         Args:
             model_path: Path to the joblib model bundle.
+            lazy: If True, defer model loading until first predict or explicit call.
         """
         self.model_path = model_path
         self.model = None
@@ -39,7 +40,8 @@ class MLPredictor:
         self.model_name = "Unknown"
         self.is_ready = False
         
-        self.load_model()
+        if not lazy:
+            self.load_model()
         
     def load_model(self) -> None:
         """
@@ -125,6 +127,8 @@ class MLPredictor:
         Returns:
             Dictionary containing prediction, probability, confidence, model_name, etc.
         """
+        if not self.is_ready:
+            self.load_model()
         if not self.is_ready:
             return {
                 'prediction': 'UNKNOWN',

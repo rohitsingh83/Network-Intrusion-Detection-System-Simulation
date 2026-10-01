@@ -27,7 +27,11 @@ models/*.pkl
 
 # Node
 frontend/node_modules/
+frontend_cra_backup/node_modules/
+frontend_cra_backup/build/
 frontend/build/
+frontend/out/
+frontend/.next/
 
 # OS
 .DS_Store

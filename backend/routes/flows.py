@@ -12,7 +12,7 @@ import logging
 from typing import Optional
 
 from fastapi import APIRouter, Request, Query, HTTPException
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, ConfigDict
 
 from ids.feature_extractor import extract_features, validate_flow
 
@@ -25,6 +25,8 @@ router = APIRouter()
 # ---------------------------------------------------------------------------
 class FlowInput(BaseModel):
     """Incoming network-flow record from the traffic simulator."""
+    model_config = ConfigDict(populate_by_name=True)
+
     source_ip: str
     destination_ip: str
     source_port: int = Field(ge=0, le=65535)
@@ -38,9 +40,6 @@ class FlowInput(BaseModel):
     syn_count: int = 0
     rst_count: int = 0
     average_packet_size: float = 0.0
-
-    class Config:
-        populate_by_name = True       # accept both "duration" and "duration_seconds"
 
 
 class FlowAnalysisResponse(BaseModel):
@@ -74,7 +73,7 @@ async def process_flow(flow: FlowInput, request: Request):
     broadcaster = getattr(request.app.state, "broadcaster", None)
 
     flow_id = f"FLW-{uuid.uuid4().hex[:12].upper()}"
-    timestamp = datetime.datetime.utcnow().isoformat()
+    timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
     # ---- 1. Build raw flow dict -----------------------------------------
     raw_flow = flow.model_dump(by_alias=False)
@@ -237,7 +236,7 @@ async def list_flows(
         filters["classification"] = classification
 
     flows_data = db.get_flows(limit=limit, offset=offset, filters=filters)
-    return {"data": flows_data, "count": len(flows_data), "limit": limit, "offset": offset}
+    return flows_data
 
 
 # ---------------------------------------------------------------------------

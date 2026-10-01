@@ -269,6 +269,7 @@ class DatabaseManager:
                 'suspiciousTraffic': suspicious_flows,
                 'open_alerts': open_alerts,
                 'openAlerts': open_alerts,
+                'total_alerts': open_alerts,
                 'critical_alerts': critical_alerts,
                 'criticalAlerts': critical_alerts,
                 'avg_risk_score': round(avg_risk, 2),

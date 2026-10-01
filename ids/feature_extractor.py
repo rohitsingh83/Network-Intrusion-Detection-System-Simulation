@@ -3,6 +3,8 @@ Network Feature Extraction Module.
 Computes relevant metrics from raw flow data for IDS analysis.
 """
 
+import ipaddress
+
 def extract_features(flow_data: dict) -> dict:
     """
     Computes derived features from a network flow record.
@@ -15,7 +17,7 @@ def extract_features(flow_data: dict) -> dict:
     # Base fields
     packet_count = float(flow_data.get('packet_count', 0))
     byte_count = float(flow_data.get('byte_count', 0))
-    duration = float(flow_data.get('duration_seconds', 0.0))
+    duration = float(flow_data.get('duration_seconds', flow_data.get('duration', 0.0)))
     conn_count = float(flow_data.get('connection_count', 0))
     failed_conn = float(flow_data.get('failed_connection_count', 0))
     syn_count = float(flow_data.get('syn_count', 0))
@@ -36,9 +38,15 @@ def extract_features(flow_data: dict) -> dict:
     
     # Create the feature dict
     features = {
+        'source_ip': flow_data.get('source_ip'),
+        'destination_ip': flow_data.get('destination_ip'),
+        'source_port': flow_data.get('source_port'),
+        'destination_port': flow_data.get('destination_port'),
+        'protocol': str(flow_data.get('protocol', 'TCP')).upper(),
         'packet_count': packet_count,
         'byte_count': byte_count,
         'duration': duration,
+        'duration_seconds': duration,
         'bytes_per_second': bytes_per_second,
         'packets_per_second': packets_per_second,
         'average_packet_size': average_packet_size,
@@ -49,9 +57,9 @@ def extract_features(flow_data: dict) -> dict:
         'rst_count': rst_count,
         'syn_ratio': syn_ratio,
         'connection_rate': connection_rate,
-        # Default single flow means 1 unique port/IP if present
-        'unique_destination_ports': 1 if flow_data.get('destination_port') else 0,
-        'unique_destination_ips': 1 if flow_data.get('destination_ip') else 0
+        # Honor unique_destination_ports if provided or compute default
+        'unique_destination_ports': flow_data.get('unique_destination_ports', 1 if flow_data.get('destination_port') is not None else 0),
+        'unique_destination_ips': flow_data.get('unique_destination_ips', 1 if flow_data.get('destination_ip') is not None else 0)
     }
     
     return features
@@ -82,6 +90,18 @@ def validate_flow(flow: dict) -> tuple[bool, list[str]]:
             except (ValueError, TypeError):
                 errors.append(f"{port_field} must be an integer")
                 
-    # Basic IP validation could be added here (e.g. regex for IPv4/IPv6)
+    # Validate IP address syntax
+    for ip_field in ['source_ip', 'destination_ip']:
+        if ip_field in flow:
+            try:
+                ipaddress.ip_address(str(flow[ip_field]))
+            except ValueError:
+                errors.append(f"Invalid {ip_field}: {flow[ip_field]}")
+                
+    # Validate protocol
+    if 'protocol' in flow:
+        proto = str(flow['protocol']).upper()
+        if proto not in ['TCP', 'UDP', 'ICMP']:
+            errors.append(f"Unsupported protocol: {flow['protocol']}")
     
     return len(errors) == 0, errors

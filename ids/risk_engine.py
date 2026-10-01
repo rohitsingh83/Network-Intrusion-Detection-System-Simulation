@@ -61,3 +61,6 @@ class RiskEngine:
             },
             'weights_used': self.weights
         }
+
+    # Backward-compatible alias
+    calculate_risk = calculate_risk_score

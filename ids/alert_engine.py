@@ -32,9 +32,19 @@ class AlertEngine:
             
         return steps
 
-    def generate_alert(self, flow: dict, features: dict, risk_result: dict, rule_results: list, anomaly_result: dict, ml_result=None) -> dict:
+    def generate_alert(self, flow: dict, features: dict = None, risk_result: dict = None, rule_results: list = None, anomaly_result: dict = None, ml_result=None) -> dict:
         """Only generate alert if risk_score > 20"""
-        
+        if risk_result is None and isinstance(features, dict) and "risk_score" in features:
+            risk_result = features
+            features = {}
+        elif risk_result is None:
+            risk_result = {}
+
+        if rule_results is None:
+            rule_results = []
+        if anomaly_result is None:
+            anomaly_result = {}
+            
         if risk_result.get('risk_score', 0) <= 20:
             return None
             

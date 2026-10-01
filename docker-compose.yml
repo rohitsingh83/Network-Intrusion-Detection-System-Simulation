@@ -1,0 +1,63 @@
+version: "3.8"
+
+services:
+  # ---------------------------------------------------------------------------
+  # Network IDS Core Backend & Real-Time Engine
+  # ---------------------------------------------------------------------------
+  ids-backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aegisflow-ids-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8000
+      - DEBUG=false
+      - DATABASE_PATH=/app/data/ids_database.db
+      - ML_ENABLED=true
+      - MODEL_PATH=/app/models/ids_model.joblib
+      - RULE_WEIGHT=0.4
+      - ANOMALY_WEIGHT=0.3
+      - ML_WEIGHT=0.3
+      - RATE_LIMIT_PER_MINUTE=600
+      - CORRELATION_TIME_WINDOW=60
+    volumes:
+      - ids_data:/app/data
+      - ids_models:/app/models
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    networks:
+      - ids-network
+
+  # ---------------------------------------------------------------------------
+  # Streaming Traffic Simulator (Runs alongside backend to feed live telemetry)
+  # ---------------------------------------------------------------------------
+  traffic-simulator:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: aegisflow-ids-simulator
+    restart: unless-stopped
+    depends_on:
+      ids-backend:
+        condition: service_healthy
+    command: ["python", "simulator/traffic_simulator.py", "--mode", "mixed", "--speed", "fast", "--api-url", "http://ids-backend:8000", "--duration", "0"]
+    networks:
+      - ids-network
+
+volumes:
+  ids_data:
+    driver: local
+  ids_models:
+    driver: local
+
+networks:
+  ids-network:
+    driver: bridge
