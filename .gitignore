@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Secrets and local databases
+.env
+*.db
+*.sqlite
+*.sqlite3
+
+# Local model artifacts (evaluation JSON can be committed if desired)
+models/*.joblib
+models/*.pkl
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+_site/
+
+# Local download bundle (keep out of the published repository)
+SentinelFlow-GitHub-Pages-source.zip
+
+# Editors / OS
+.DS_Store
+.vscode/
+.idea/
+*.swp

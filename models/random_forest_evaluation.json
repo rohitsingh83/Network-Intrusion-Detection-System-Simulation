@@ -1,0 +1,27 @@
+{
+  "model_name": "random_forest",
+  "dataset": "network_traffic.csv",
+  "rows": 5000,
+  "train_rows": 3750,
+  "test_rows": 1250,
+  "accuracy": 1.0,
+  "precision": 1.0,
+  "recall": 1.0,
+  "f1": 1.0,
+  "confusion_matrix_labels": [
+    "NORMAL",
+    "SUSPICIOUS"
+  ],
+  "confusion_matrix": [
+    [
+      938,
+      0
+    ],
+    [
+      0,
+      312
+    ]
+  ],
+  "threshold": 0.5,
+  "note": "Measured on a held-out split of synthetic records; not production efficacy."
+}

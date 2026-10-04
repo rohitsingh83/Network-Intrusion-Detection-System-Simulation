@@ -1,0 +1,19 @@
+# Render Blueprint for the SentinelFlow educational demo.
+# Writes are protected by an auto-generated IDS_API_KEY; never hard-code secrets.
+services:
+  - type: web
+    name: sentinelflow-ids
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt && python -m ml.train_model --model random_forest
+    startCommand: python run.py
+    healthCheckPath: /health
+    envVars:
+      - key: IDS_HOST
+        value: 0.0.0.0
+      - key: IDS_ENABLE_ML
+        value: "true"
+      - key: IDS_SEED_DEMO
+        value: "true"
+      - key: IDS_API_KEY
+        generateValue: true

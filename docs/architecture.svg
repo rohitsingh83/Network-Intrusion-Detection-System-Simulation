@@ -1,0 +1,105 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="680" viewBox="0 0 1200 680" role="img" aria-labelledby="title description">
+  <title id="title">SentinelFlow synthetic hybrid IDS architecture</title>
+  <desc id="description">Synthetic flow records pass through validation, feature extraction, rule, anomaly and optional ML detection, hybrid risk and alert correlation, SQLite, and SOC analyst dashboard. No packets are transmitted.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0c1c2c"/><stop offset="1" stop-color="#07111f"/></linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#123b42"/><stop offset="1" stop-color="#0d2633"/></linearGradient>
+    <linearGradient id="blue" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1c3153"/><stop offset="1" stop-color="#101e35"/></linearGradient>
+    <linearGradient id="violet" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#342652"/><stop offset="1" stop-color="#1a1b35"/></linearGradient>
+    <linearGradient id="amber" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#473523"/><stop offset="1" stop-color="#251f1c"/></linearGradient>
+    <filter id="shadow" x="-20%" y="-30%" width="140%" height="160%"><feDropShadow dx="0" dy="9" stdDeviation="11" flood-color="#000" flood-opacity=".25"/></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 0 6 9 3z" fill="#51cbb8"/></marker>
+    <marker id="arrow-soft" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0 0 0 6 9 3z" fill="#7186a2"/></marker>
+    <style>
+      text{font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif}.title{fill:#eef5fb;font-size:27px;font-weight:700;letter-spacing:-.5px}.subtitle{fill:#8ca0b7;font-size:12px}.eyebrow{fill:#57d7c1;font-size:9px;font-weight:700;letter-spacing:2px}.box-title{fill:#e5edf6;font-size:14px;font-weight:650}.box-sub{fill:#94a7bc;font-size:10px}.tag{fill:#78ddcf;font-size:8px;font-weight:700;letter-spacing:.8px}.line{fill:none;stroke:#51cbb8;stroke-width:2;marker-end:url(#arrow)}.line-soft{fill:none;stroke:#7186a2;stroke-width:1.6;stroke-dasharray:5 5;marker-end:url(#arrow-soft)}.pill{fill:#123a38;stroke:#2d9e8e;stroke-width:1}.label{fill:#82a195;font-size:9px}
+    </style>
+  </defs>
+  <rect width="1200" height="680" rx="22" fill="url(#bg)"/>
+  <circle cx="1110" cy="40" r="210" fill="#1d6a69" opacity=".07"/>
+  <circle cx="35" cy="650" r="235" fill="#364b83" opacity=".08"/>
+  <text x="54" y="56" class="eyebrow">DEFENSIVE NETWORK SECURITY · DATA-ONLY SIMULATION</text>
+  <text x="54" y="96" class="title">SentinelFlow · Hybrid IDS Architecture</text>
+  <text x="54" y="120" class="subtitle">Synthetic flow records → evidence-rich detections → analyst-led investigation</text>
+  <rect x="890" y="49" width="250" height="34" rx="17" class="pill"/>
+  <circle cx="909" cy="66" r="4" fill="#50d6b9"/><text x="922" y="70" class="tag">NO PACKET CAPTURE OR TRANSMISSION</text>
+
+  <!-- source -->
+  <g filter="url(#shadow)">
+    <rect x="55" y="200" width="205" height="114" rx="13" fill="url(#teal)" stroke="#2b8e85" stroke-opacity=".5"/>
+    <text x="76" y="229" class="tag">01 · SYNTHETIC SOURCE</text>
+    <text x="76" y="256" class="box-title">Flow generator</text>
+    <text x="76" y="278" class="box-sub">5,000-row CSV · local JSON replay</text>
+    <text x="76" y="296" class="box-sub">RFC 5737 documentation IP ranges</text>
+  </g>
+  <path d="M260 257h48" class="line"/>
+  <g filter="url(#shadow)">
+    <rect x="310" y="200" width="200" height="114" rx="13" fill="url(#blue)" stroke="#4a73b6" stroke-opacity=".48"/>
+    <text x="331" y="229" class="tag" fill="#8fb4ff">02 · FASTAPI INTAKE</text>
+    <text x="331" y="256" class="box-title">Validate & persist</text>
+    <text x="331" y="278" class="box-sub">Pydantic · duplicate protection</text>
+    <text x="331" y="296" class="box-sub">IP · protocol · ports · counters</text>
+  </g>
+  <path d="M510 257h48" class="line"/>
+  <g filter="url(#shadow)">
+    <rect x="560" y="200" width="205" height="114" rx="13" fill="url(#blue)" stroke="#4a73b6" stroke-opacity=".48"/>
+    <text x="581" y="229" class="tag" fill="#8fb4ff">03 · FEATURE EXTRACTION</text>
+    <text x="581" y="256" class="box-title">Build flow features</text>
+    <text x="581" y="278" class="box-sub">Rates · ratios · port diversity</text>
+    <text x="581" y="296" class="box-sub">Context-aware 60s source window</text>
+  </g>
+
+  <!-- detector branch -->
+  <path d="M662 314v39H231v34" class="line-soft"/>
+  <path d="M662 353h0v34" class="line-soft"/>
+  <path d="M662 353h431v34" class="line-soft"/>
+  <g filter="url(#shadow)">
+    <rect x="125" y="389" width="215" height="104" rx="13" fill="url(#teal)" stroke="#2b8e85" stroke-opacity=".5"/>
+    <text x="147" y="416" class="tag">04A · SIGNATURE ENGINE</text>
+    <text x="147" y="443" class="box-title">Six transparent rules</text>
+    <text x="147" y="465" class="box-sub">Rate · failures · ports · SYN · volume</text>
+    <text x="147" y="481" class="box-sub">Rule ID + measured evidence</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="440" y="389" width="215" height="104" rx="13" fill="url(#violet)" stroke="#8364b8" stroke-opacity=".52"/>
+    <text x="462" y="416" class="tag" fill="#c4a8ff">04B · STATISTICAL ANOMALY</text>
+    <text x="462" y="443" class="box-title">Baseline comparison</text>
+    <text x="462" y="465" class="box-sub">Mean / standard deviation / IQR</text>
+    <text x="462" y="481" class="box-sub">0–100 + per-feature evidence</text>
+  </g>
+  <g filter="url(#shadow)">
+    <rect x="755" y="389" width="215" height="104" rx="13" fill="url(#violet)" stroke="#8364b8" stroke-opacity=".52"/>
+    <text x="777" y="416" class="tag" fill="#c4a8ff">04C · OPTIONAL MACHINE LEARNING</text>
+    <text x="777" y="443" class="box-title">Supervised / unsupervised</text>
+    <text x="777" y="465" class="box-sub">Random Forest · Logistic Regression</text>
+    <text x="777" y="481" class="box-sub">Isolation Forest · actual test metrics</text>
+  </g>
+  <path d="M340 442h113" class="line-soft"/>
+  <path d="M655 442h96" class="line-soft"/>
+  <path d="M232 493v43h250" class="line"/>
+  <path d="M547 493v43h-65" class="line"/>
+  <path d="M862 493v43H482" class="line"/>
+
+  <!-- risk and persistence -->
+  <g filter="url(#shadow)">
+    <rect x="350" y="540" width="265" height="91" rx="13" fill="url(#amber)" stroke="#bb8740" stroke-opacity=".54"/>
+    <text x="374" y="565" class="tag" fill="#f2c36e">05 · HYBRID RISK & ALERT CORRELATION</text>
+    <text x="374" y="590" class="box-title">0–100 risk · severity · 60s grouping</text>
+    <text x="374" y="612" class="box-sub">Evidence retained; analyst decides disposition</text>
+  </g>
+  <path d="M615 584h55" class="line"/>
+  <g filter="url(#shadow)">
+    <rect x="672" y="540" width="210" height="91" rx="13" fill="url(#blue)" stroke="#4a73b6" stroke-opacity=".48"/>
+    <text x="694" y="565" class="tag" fill="#8fb4ff">06 · SQLITE EVENT STORE</text>
+    <text x="694" y="590" class="box-title">Flows · alerts · notes</text>
+    <text x="694" y="612" class="box-sub">Rules · model results · timeline</text>
+  </g>
+  <path d="M882 584h55" class="line"/>
+  <g filter="url(#shadow)">
+    <rect x="940" y="540" width="205" height="91" rx="13" fill="url(#teal)" stroke="#2b8e85" stroke-opacity=".5"/>
+    <text x="962" y="565" class="tag">07 · SOC ANALYST CONSOLE</text>
+    <text x="962" y="590" class="box-title">Triage · investigate</text>
+    <text x="962" y="612" class="box-sub">Notes · timeline · dashboards</text>
+  </g>
+
+  <text x="56" y="645" class="label">Signals request review; an anomaly or rule match does not prove malicious activity.</text>
+</svg>
