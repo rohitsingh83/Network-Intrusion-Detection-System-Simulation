@@ -44,12 +44,10 @@ This repository includes `.github/workflows/deploy-pages.yml`. It copies the fro
 For a project repository, the URL format is:
 
 ```text
-https://YOUR-USERNAME.github.io/Network-Intrusion-Detection-System-Simulation/
+https://rohitsingh83.github.io/Network-Intrusion-Detection-System-Simulation/
 ```
 
-Replace `YOUR-USERNAME` with the account that owns the repository. GitHub Pages describes project sites as living under `https://<owner>.github.io/<repositoryname>` [here](https://docs.github.com/en/pages/getting-started-with-github-pages/what-is-github-pages). Wait for the workflow to finish successfully, then open the URL. Initial publication can take a few minutes.
-
-A personal root site such as `https://YOUR-USERNAME.github.io/` is a different GitHub Pages site and requires a repository named exactly `YOUR-USERNAME.github.io`; use the project URL above for this project repository.
+The live demo is already published and accessible at [https://rohitsingh83.github.io/Network-Intrusion-Detection-System-Simulation/](https://rohitsingh83.github.io/Network-Intrusion-Detection-System-Simulation/).
 
 ## Test the Pages mode before pushing
 

@@ -45,4 +45,4 @@ Repository name: `Network-Intrusion-Detection-System-Simulation`
 
 ## F. Live portfolio demo
 
-The repository includes a GitHub Pages workflow and [publishing guide](GITHUB_PAGES.md). After publishing, add your actual `https://YOUR-USERNAME.github.io/Network-Intrusion-Detection-System-Simulation/` URL here and to your résumé/LinkedIn. Until Pages is enabled in your GitHub account, describe the site as **deployment-ready**, not as publicly hosted. The Pages demo runs client-side and stores state in each visitor's browser; the optional Render Blueprint (`render.yaml`) hosts the separate Python API.
+The repository includes a GitHub Pages workflow and [publishing guide](GITHUB_PAGES.md). The live interactive demo is live at [`https://rohitsingh83.github.io/Network-Intrusion-Detection-System-Simulation/`](https://rohitsingh83.github.io/Network-Intrusion-Detection-System-Simulation/). The Pages demo runs client-side and stores state in each visitor's browser; the optional Render Blueprint (`render.yaml`) hosts the separate Python API.

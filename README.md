@@ -3,8 +3,10 @@
 **SentinelFlow** is a defensive, synthetic-only hybrid IDS lab with an analyst-first SOC console. It turns safe flow records into explainable rule matches, statistical anomaly scores, an optional scikit-learn prediction, a bounded risk score, correlated alerts, and an investigation timeline.
 
 > **Safety by design:** this application processes flow *data records* only. It does not capture packets, scan hosts, send attack traffic, or contact public systems. The included generator uses RFC 5737 documentation address ranges.
+>
+> 🌐 **Live Interactive Website:** [https://rohitsingh83.github.io/Network-Intrusion-Detection-System-Simulation/](https://rohitsingh83.github.io/Network-Intrusion-Detection-System-Simulation/)
 
-![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white) ![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white) ![Detection](https://img.shields.io/badge/Detection-Hybrid-27b99a) ![Data](https://img.shields.io/badge/Data-Synthetic%20only-556987)
+![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white) ![FastAPI](https://img.shields.io/badge/API-FastAPI-009688?logo=fastapi&logoColor=white) ![Detection](https://img.shields.io/badge/Detection-Hybrid-27b99a) ![Live Demo](https://img.shields.io/badge/Live%20Demo-GitHub%20Pages-brightgreen?logo=github) ![Data](https://img.shields.io/badge/Data-Synthetic%20only-556987)
 
 ## Overview
 
